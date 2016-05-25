@@ -4,7 +4,9 @@ public class Weibo {
 	private String time;
 	private String user;
 	private String content;
+	private String contentOrigin;
 	private String topic;
+	private String relativeUser;
 	private double credit;
 	
 	public String getTime() {
@@ -25,11 +27,24 @@ public class Weibo {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	
+	public String getContentOrigin() {
+		return contentOrigin;
+	}
+	public void setContentOrigin(String contentOrigin) {
+		this.contentOrigin = contentOrigin;
+	}
 	public String getTopic() {
 		return topic;
 	}
 	public void setTopic(String topic) {
 		this.topic = topic;
+	}
+	public String getRelativeUser() {
+		return relativeUser;
+	}
+	public void setRelativeUser(String relativeUser) {
+		this.relativeUser = relativeUser;
 	}
 	public double getCredit() {
 		return credit;
