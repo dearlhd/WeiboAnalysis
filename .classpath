@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/stanford-parser-3.4-models.jar"/>
 	<classpathentry kind="lib" path="lib/stanford-parser-3.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/stanford-parser.jar"/>
+	<classpathentry kind="lib" path="lib/javacsv.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
