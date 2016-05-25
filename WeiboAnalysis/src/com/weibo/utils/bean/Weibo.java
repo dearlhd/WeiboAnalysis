@@ -5,7 +5,7 @@ public class Weibo {
 	private String user;
 	private String content;
 	private String topic;
-	private String credit;
+	private double credit;
 	
 	public String getTime() {
 		return time;
@@ -31,10 +31,11 @@ public class Weibo {
 	public void setTopic(String topic) {
 		this.topic = topic;
 	}
-	public String getCredit() {
+	public double getCredit() {
 		return credit;
 	}
-	public void setCredit(String credit) {
+	public void setCredit(double credit) {
 		this.credit = credit;
 	}
+	
 }
