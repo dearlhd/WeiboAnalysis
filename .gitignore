@@ -5,6 +5,8 @@
 
 # Package Files #
 stanford-parser-3.4-models.jar
+ctb.gz
+dict-chris6.ser.gz
 *.war
 *.ear
 *.csv
