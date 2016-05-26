@@ -1,9 +1,5 @@
 package com.lhd.analysis;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +8,7 @@ import java.util.Map;
 import com.huaban.analysis.jieba.JiebaSegmenter;
 import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
 import com.huaban.analysis.jieba.SegToken;
+import com.weibo.utils.bean.Weibo;
 import com.weibo.utils.dictUtils.DictUtils;
 
 public class ComputeCredit {
@@ -23,15 +20,43 @@ public class ComputeCredit {
 
 	public ComputeCredit() {
 		init();
-		segmentSentence("她长得美丽，她长得不美丽，她长得不是不美丽，她长得很美丽，她长得很难看，她长得十分很美丽，"
-				+ "她长的不很美丽， 她长得很不美丽");
+	}
+	
+	public double getCredit (Weibo wb) {
+		double d1 = 0.0, d2 = 0.0;
+		if (wb.getContent() != null) {
+			d1 = getCreditBySentence (wb.getContent());
+		}
+		if (wb.getContentOrigin() != null) {
+			d2 = getCreditBySentence (wb.getContentOrigin());
+		}
+		
+//		if (d1 == 0.0) {
+//			return d2;
+//		}
+//		if (d2 == 0.0) {
+//			return d1;
+//		}
+		
+		return (2.0 * d1 + d2)/3;
+	}
+	
+	public double getCreditBySentence(String content) {
+		segmentSentence(content);
+		List<Double> credit = new ArrayList<Double>();
 		for (int i = 0; i < sentences.size(); i++)
-			parseSentence(sentences.get(i));
+			credit.add(parseSentence(sentences.get(i)));
+		
+		double sum = 0;
+		for (int i = 0; i < credit.size(); i++) {
+			sum += credit.get(i);
+		}
+		sum = sum/credit.size() *(1.0+ 0.1*credit.size());
+		return sum;
 	}
 	
 	private void init () {
 		sentences = new ArrayList<List<String>>();
-		sentences.add(new ArrayList<String>());
 		loadDict();
 	}
 	
@@ -95,11 +120,11 @@ public class ComputeCredit {
 	}
 
 	private void segmentSentence(String str) {
+		sentences.clear();
+		sentences.add(new ArrayList<String>());
 		JiebaSegmenter segmenter = new JiebaSegmenter();
 		List<SegToken> ls = segmenter.process(str, SegMode.SEARCH);
 	
-
-		int cnt = 0;
 		int index = 0;
 		for (int i = 0; i < ls.size(); i++) {
 			List<String> sentence = sentences.get(index);
@@ -111,27 +136,25 @@ public class ComputeCredit {
 			}
 			else {
 				index++;
-				cnt++;
 				sentences.add(new ArrayList<String>());
 			}
 		}
 		
-		System.out.println(cnt);
-		for (int i = 0; i < sentences.size(); i++) {
-			List<String> sentence = sentences.get(i); 
-			for (int j = 0; j < sentence.size(); j++) {
-				System.out.print(sentence.get(j) + " ");
-			}
-			System.out.println();
-		}
-		
+//		System.out.println(cnt);
+//		for (int i = 0; i < sentences.size(); i++) {
+//			List<String> sentence = sentences.get(i); 
+//			for (int j = 0; j < sentence.size(); j++) {
+//				System.out.print(sentence.get(j) + " ");
+//			}
+//			System.out.println();
+//		}
 	}
 	
 	private double parseSentence (List<String> words) {
-		for (int i = 0; i < words.size(); i++) {
-			System.out.print(words.get(i) + " ");
-		}
-		System.out.println();
+//		for (int i = 0; i < words.size(); i++) {
+//			System.out.print(words.get(i) + " ");
+//		}
+//		System.out.println();
 		
 		double credit = 0.0;
 		double base = 0.0;
@@ -140,11 +163,9 @@ public class ComputeCredit {
 		
 		for (int i = 0; i < words.size(); i++) {
 			if (positive.containsKey(words.get(i))) {
-				System.out.println("Base " + words.get(i));
 				base = 0.8;
 			}
 			else if (negative.containsKey(words.get(i))){
-				System.out.println("Base " + words.get(i));
 				base = -0.8;
 			}
 		}
@@ -152,12 +173,10 @@ public class ComputeCredit {
 		for (int i = 0; i < words.size(); i++) {
 			if(adv.containsKey(words.get(i))) {
 				double degree = adv.get(words.get(i));
-				System.out.println("Adv " + words.get(i) + " " + degree);
 				posDegree.add(new MyPair(i, degree));
 			}
 			if (negAdv.containsKey(words.get(i))) {
 				double degree = negAdv.get(words.get(i)); 
-				System.out.println("negAdv " + words.get(i) + " " + degree);
 				negDegree.add(new MyPair(i, degree));
 			}
 		}
@@ -212,8 +231,6 @@ public class ComputeCredit {
 			}
 		}
 		
-		System.out.println("Credit: " + credit);
-		System.out.println();
 		return credit;
 	}
 	
@@ -227,7 +244,7 @@ public class ComputeCredit {
 		}
 	}
 
-	public static void main(String[] args) {
-		new ComputeCredit();
-	}
+//	public static void main(String[] args) {
+//		new ComputeCredit();
+//	}
 }

@@ -135,7 +135,7 @@ public class Preprocessing {
 					f = false;
 					relatives.add(content.substring(m+1,i));
 					content.replace(m, i+1, "");
-					i = m;
+					i = m-1;
 				}
 			}
 		}
@@ -173,7 +173,12 @@ public class Preprocessing {
 		int mark1 = content.indexOf("//");
 		if (mark1 >= 5) {
 			if (content.substring(mark1-5, mark1).equals("http:")) {
-				mark1 = 2 + mark1 + content.substring(mark1+2, content.length()).indexOf("//");
+				if (content.substring(mark1+2, content.length()).indexOf("//") != -1) {
+					mark1 = 2 + mark1 + content.substring(mark1+2, content.length()).indexOf("//");
+				}
+				else {
+					mark1 = -1;
+				}
 			}
 		}
 		
