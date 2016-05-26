@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.huaban.analysis.jieba.JiebaSegmenter;
@@ -27,6 +28,10 @@ import edu.stanford.nlp.sequences.DocumentReaderAndWriter;
 public class stanford {
 	
 	  private static final String basedir = System.getProperty("SegDemo", "WebContent/dict");
+	  
+	  private static final TXTUtils txt = new TXTUtils();
+	  private static final HashMap<String, String> posWord = txt.readTXT("WebContent/dict/正面词/正面词（0.8）.txt");
+	  private static final HashMap<String, String> negWord = txt.readTXT("WebContent/dict/负面词/负面词（-0.8）.txt");
 
 	  public static void main(String[] args) throws Exception {
 	    Properties props = new Properties();
@@ -47,13 +52,17 @@ public class stanford {
 	      segmenter.classifyAndWriteAnswers(filename);
 	    }
 
-	    String sample = "长春市长春药店";
+	  /*  String sample = "长春市长春药店";
 	    List<String> segmented = segmenter.segmentString(sample);
 	    System.out.println(segmented);
-	    
+	    */
 	    String sample1 = "她长得不可能不漂亮";
 	    List<String> segmented1 = segmenter.segmentString(sample1);
 	    System.out.println(segmented1);
+	    
+	    
+//	    if (posWord.containsKey("漂亮"))
+//	    	System.out.print("yes");
 	  }
 
 	
