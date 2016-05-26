@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TXTUtils {
-	public List<String> readTXT(String path){
-		List<String> dic = new ArrayList<String>();
+	public HashMap<String, String> readTXT(String path){
+		HashMap<String, String> dic = new HashMap<String, String>();
 		try{
 			String encoding = "GBK";
 		    File file = new File(path);
@@ -18,7 +19,7 @@ public class TXTUtils {
 		    	BufferedReader bufferedReader = new BufferedReader(read);
 		    	String lineTxt = null;
 		    	while ((lineTxt = bufferedReader.readLine()) != null){
-		    		dic.add(lineTxt);
+		    		dic.put(lineTxt, "yes");
 		    	}
 		    	read.close();
 		    }
