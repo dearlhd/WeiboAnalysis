@@ -91,7 +91,7 @@ public class Preprocessing {
 					f = false;
 					topics.add(content.substring(m+1,i));
 					content.replace(m, i+1, "");
-					i = m;
+					i = m-1;
 				}
 			}
 		}
@@ -130,7 +130,7 @@ public class Preprocessing {
 					m = i;
 				}
 			}
-			else if (content.charAt(i) == ' ') {
+			else if (content.charAt(i) == ' ' || content.charAt(i) == ':' || content.charAt(i) == ':') {
 				if (f) {
 					f = false;
 					relatives.add(content.substring(m+1,i));
@@ -162,9 +162,22 @@ public class Preprocessing {
 	}
 	
 	String divideContent (StringBuffer content) {
-		int mark1 = content.indexOf("//");
-		int mark2 = content.indexOf("【原微博】");
 		String origin = "";
+		int mark = content.indexOf("//【原微博】");
+		if (mark != -1) {
+			origin = content.substring(mark+7, content.length()); 
+			content.replace(mark, content.length(), "");
+			return origin;
+		}
+		
+		int mark1 = content.indexOf("//");
+		if (mark1 >= 5) {
+			if (content.substring(mark1-5, mark1).equals("http:")) {
+				mark1 = 2 + mark1 + content.substring(mark1+2, content.length()).indexOf("//");
+			}
+		}
+		
+		int mark2 = content.indexOf("【原微博】");
 		
 		if (mark1 == -1 && mark2 == -1) {
 			return origin;
