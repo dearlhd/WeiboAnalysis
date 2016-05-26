@@ -17,13 +17,16 @@ import com.weibo.utils.dictUtils.DictUtils;
 public class ComputeCredit {
 	List<List<String>> sentences;
 	Map<String, Double> adv;
+	Map<String, Double> negAdv;
 	Map<String, Double> negative;
 	Map<String, Double> positive;
 
 	public ComputeCredit() {
 		init();
-		segmentSentence("我觉得这个很不准啊");
-		parseSentence(sentences.get(0));
+		segmentSentence("她长得美丽，她长得不美丽，她长得不是不美丽，她长得很美丽，她长得很难看，她长得十分很美丽，"
+				+ "她长的不很美丽， 她长得很不美丽");
+		for (int i = 0; i < sentences.size(); i++)
+			parseSentence(sentences.get(i));
 	}
 	
 	private void init () {
@@ -38,6 +41,7 @@ public class ComputeCredit {
 		final String positivePath = "Dict/positive/positive.txt";
 		
 		adv = new HashMap<String, Double>();
+		negAdv = new HashMap<String, Double>();
 		negative = new HashMap<String, Double>();
 		positive = new HashMap<String, Double>();
 		
@@ -66,7 +70,7 @@ public class ComputeCredit {
 		
 		ls = du.readDict(advPath + "negVery_-0_8.txt");
 		for (int i = 0; i < ls.size();i++) {
-			adv.put(ls.get(i), -0.8);
+			negAdv.put(ls.get(i), -0.8);
 		}
 		
 		ls = du.readDict(advPath + "normal_0_5.txt");
@@ -92,7 +96,7 @@ public class ComputeCredit {
 
 	private void segmentSentence(String str) {
 		JiebaSegmenter segmenter = new JiebaSegmenter();
-		List<SegToken> ls = segmenter.process(str, SegMode.INDEX);
+		List<SegToken> ls = segmenter.process(str, SegMode.SEARCH);
 	
 
 		int cnt = 0;
@@ -125,13 +129,14 @@ public class ComputeCredit {
 	
 	private double parseSentence (List<String> words) {
 		for (int i = 0; i < words.size(); i++) {
-			System.out.print(words.get(i));
+			System.out.print(words.get(i) + " ");
 		}
 		System.out.println();
 		
 		double credit = 0.0;
 		double base = 0.0;
-		List<Double> degree = new ArrayList<Double>();
+		List<MyPair> posDegree = new ArrayList<MyPair>();
+		List<MyPair> negDegree = new ArrayList<MyPair>();
 		
 		for (int i = 0; i < words.size(); i++) {
 			if (positive.containsKey(words.get(i))) {
@@ -146,19 +151,80 @@ public class ComputeCredit {
 		
 		for (int i = 0; i < words.size(); i++) {
 			if(adv.containsKey(words.get(i))) {
-				System.out.println("Degree " + words.get(i));
-				degree.add(adv.get(words.get(i)));
+				double degree = adv.get(words.get(i));
+				System.out.println("Adv " + words.get(i) + " " + degree);
+				posDegree.add(new MyPair(i, degree));
+			}
+			if (negAdv.containsKey(words.get(i))) {
+				double degree = negAdv.get(words.get(i)); 
+				System.out.println("negAdv " + words.get(i) + " " + degree);
+				negDegree.add(new MyPair(i, degree));
 			}
 		}
 		
-		credit = base;
-		for (int i = 0; i < degree.size(); i++) {
-			credit *= degree.get(i);
+		int posSz = posDegree.size(), negSz = negDegree.size() ; 
+		
+		if (posSz == 0 && negSz == 0) {
+			credit = base;
+		}
+		else if (posSz == 0 && negSz == 1) {
+			credit = base * negDegree.get(0).degree;
+		}
+		else if (posSz == 0 && negSz == 2) {
+			credit = base * negDegree.get(0).degree * negDegree.get(1).degree;
+		}
+		else if (posSz > 0) {
+			List<Double> nas = new ArrayList<Double>();
+			
+			for (int i = 0; i < posDegree.size(); i++) {
+				nas.add(posDegree.get(i).degree);
+			}
+			
+			if (negSz == 1) {
+				if (negDegree.get(0).snum > posDegree.get(posSz-1).snum)
+					base = base * (-0.8);
+				else {
+					for (int i = 0; i < nas.size(); i++) {
+						if (nas.get(i) < 0) {
+							nas.set(i, nas.get(i)+0.2);
+						}
+						else {
+							nas.set(i, nas.get(i)-0.2);
+						}
+					}
+				}
+			}
+			if (base > 0) {
+				credit = base;
+				double left = 1-base;
+				for (int i = 0; i < nas.size(); i++) {
+					credit += left * nas.get(i);
+					left = 1- credit;
+				}
+			}
+			else {
+				credit = base;
+				double left = -1-base;
+				for (int i = 0; i < nas.size(); i++) {
+					credit += left * nas.get(i);
+					left = -1- credit;
+				}
+			}
 		}
 		
 		System.out.println("Credit: " + credit);
-		
+		System.out.println();
 		return credit;
+	}
+	
+	private class MyPair{
+		public int snum;
+		public double degree;
+		
+		public MyPair(int n, double d) {
+			snum = n;
+			degree = d;
+		}
 	}
 
 	public static void main(String[] args) {
