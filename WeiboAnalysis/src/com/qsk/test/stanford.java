@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -163,13 +165,8 @@ public class stanford {
 	  }
 	  
 	  public static void main(String[] args) throws Exception {
-	 
-	  //public stanford(String[] args) throws Exception {
+/*
 		  loadSegmenter(args);
-	  /*  String sample = "长春市长春药店";
-	    List<String> segmented = segmenter.segmentString(sample);
-	    System.out.println(segmented);
-	    */
 	      String sample = "她长得很不漂亮[笑][开心]";
 	      List<String> segmented = segmenter.segmentString(sample);
 	      System.out.println(segmented);
@@ -193,10 +190,43 @@ public class stanford {
 	    		  continue;
 	    	  }
 	      }
-	    	
-	    
-//	    if (posWord.containsKey("漂亮"))
-//	    	System.out.print("yes");
+    
+*/
+		  String path = "data/resources/data_processed.csv";
+		  CSVUtils CSV = new CSVUtils();
+		  List<Weibo> wb = CSV.readCSV(path);
+		  
+		  File file = new File("data/resources/haha.txt");
+		  if (!file.exists()){
+			  file.createNewFile();			
+		  }
+		  FileOutputStream fos = new FileOutputStream(file);
+			
+		  for (int i = 0; i < 4; ++i){
+			  String str = wb.get(i).getContent();
+			  int hd = 0, tl = str.length() - 1;
+			  while (hd <= tl){				 
+				  int ls = 0;
+				  if (str.charAt(hd) == '['){					  
+					  hd++;
+					  ls = hd;
+					  while ((hd <= tl) && (str.charAt(hd) != ']')){
+						  hd++;
+					  }
+					  System.out.println(str.substring(ls, hd));
+					  fos.write((str.substring(ls, hd)).getBytes("GBK"));
+				  }
+				  else hd++;
+				  
+			  }
+			 // fos.write((wb.get(i).getContent() + "\n").getBytes("GBK"));
+		  }
+		  
+		  fos.close();
+		  
+		 
+		  
+		//  txt.writeTXT("data/resources/haha.txt", "aasd");
 	  }
 
 	

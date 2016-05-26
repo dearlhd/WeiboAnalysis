@@ -3,7 +3,10 @@ package com.weibo.utils.txtUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,5 +36,15 @@ public class TXTUtils {
 		    e.printStackTrace();
 		}
 		return dic;
+	}
+	
+	public void writeTXT(String path, String str) throws IOException{
+		File file = new File(path);
+		if (!file.exists()){
+			file.createNewFile();			
+		}
+		FileOutputStream fos = new FileOutputStream(file);
+		fos.write((str).getBytes("GBK"));
+		fos.close();
 	}
 }
