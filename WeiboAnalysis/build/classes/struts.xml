@@ -15,4 +15,14 @@
 		</action>
 	</package>
 	
+	<package name="Actions1" extends="struts-default, json-default">
+		<action name="getEventEmotion" class="com.action.getEventEmotionAction">
+			<result type = "json">
+				<param name = "root">result</param>
+			</result>
+			<result name="error">/Fail.jsp</result>
+		</action>
+	</package>
+	
+	
 </struts>

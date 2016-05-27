@@ -1,30 +1,29 @@
 package com.action;
 
-import java.io.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.weibo.utils.bean.Weibo;
 import com.weibo.utils.csvUtils.CSVUtils;
 
-import org.apache.struts2.ServletActionContext;
+public class getEventEmotionAction  extends ActionSupport {	
 
-public class getUserEmotionAction  extends ActionSupport {	
-
-	private String userName;
+	private String eventContent;
 	private String disType;
 	private String result;
-
-	public String getUserName() {
-		return userName;
+	private List<Integer> EmotionAmo = new ArrayList<Integer>();
+	private List<String> EmotionCla = new ArrayList<String>();
+	
+	public String getEventContent() {
+		return eventContent;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setEventContent(String eventContent) {
+		this.eventContent = eventContent;
 	}
 
 	public String getDisType() {
@@ -42,7 +41,7 @@ public class getUserEmotionAction  extends ActionSupport {
 	public void setResult(String result) {
 		this.result = result;
 	}
-	
+
 	public int isLatterDate(String str1, String str2){
 		int res = 0;
 		String[] date1 = str1.split("/");
@@ -71,10 +70,6 @@ public class getUserEmotionAction  extends ActionSupport {
 		String date1 = spl1[0], time1 = spl1[1];
 		String date2 = spl2[0], time2 = spl2[1];
 		
-		
-	//	System.out.print("||" + date1 + " ___ " + time1 + "||");
-	//	System.out.print("||" + date2 + " ___ " + time2 + "||");
-		
 		if (isLatterDate(date1, date2) > 0){
 			return true;
 		}
@@ -82,30 +77,30 @@ public class getUserEmotionAction  extends ActionSupport {
 			return false;			
 		}
 		else{
-			//System.out.println("In it");
 			if (isLatterTime(time1, time2) > 0){
 				return true;
 			}
 			else return false;
 		}		
-		//System.out.println(date1 + " ___ " + time1);
+	}
+
+	public void InitClassify(){
+		EmotionCla.add("-1.0~-0.8");
+		EmotionCla.add("-0.8~-0.6");
+		EmotionCla.add("-0.6~-0.2");
+		EmotionCla.add("-0.2~0.0");
+		EmotionCla.add("0.0~0.2");
+		EmotionCla.add("0.2~0.6");
+		EmotionCla.add("0.6~0.8");
+		EmotionCla.add("0.8~1.0");
+		for (int i = 0; i < 8; ++i){
+			EmotionAmo.add(0);
+		}
 	}
 
 	public String execute() throws Exception{	
 		try{
-//			System.out.println(userName);
-//			System.out.println(disType);
-			CSVUtils CSV = new CSVUtils();
-			
-			/*File dic = new File("");
-			System.out.println(dic.getCanonicalPath());
-			System.out.println(dic.getAbsolutePath());
-			
-			String pa = ServletActionContext.getServletContext().getContextPath();
-			System.out.println(pa);		
-			String pb = ServletActionContext.getServletContext().getRealPath("result_qsk.csv");
-			System.out.println(pb);	*/
-			
+			CSVUtils CSV = new CSVUtils();		
 			List<Weibo> wb = null;
 			if (disType.equals("Stanford")){
 				wb = CSV.readCSV("D:/program/git/Git_Push/WeiboAnalysis/WeiboAnalysis/data/results/result_qsk.csv");
@@ -114,26 +109,38 @@ public class getUserEmotionAction  extends ActionSupport {
 				wb = CSV.readCSV("D:/program/git/Git_Push/WeiboAnalysis/WeiboAnalysis/data/results/result_lhd.csv");
 			}
 			
+			//System.out.println("fuck in");
+			//System.out.println(eventContent);
+			
 			List<Double> EmotionVal = new ArrayList<Double>();
 			List<String> EmotionDat = new ArrayList<String>();
+			
+			//System.out.println(wb.size());
+			
 			int len = wb.size();
-			for (int i = 0; i < len; ++i){
-				if (wb.get(i).getUser().equals(userName)){
+			for (int i = 0; i < wb.size(); ++i){
+				String[] eventSet = wb.get(i).getTopic().split(",");
+				boolean refer = false;
+				for (int j = 0; j < eventSet.length; ++j){
+					//System.out.println(eventSet[j]);
+					if (eventSet[j].equals(eventContent)){
+						refer = true;
+						break;
+					}
+				}
+				if (refer == true){
 					EmotionVal.add(wb.get(i).getCredit());
 					EmotionDat.add(wb.get(i).getTime());
-					//System.out.println(wb.get(i).getTime());
 				}
+				//if (EmotionVal.size() > 80) break;
 			}
 			
+			//System.out.println(EmotionVal);
+			
+			
 			len = EmotionDat.size();
-		
-			//System.out.println(isLatter("2016/3/16 22:54", "2016/3/16 9:50")); 
-			for (int i = 0; i < len - 1; ++i){
+		/*	for (int i = 0; i < len - 1; ++i){
 				for (int j = i + 1; j < len; ++j){
-//					System.out.println();
-//					System.out.print(EmotionDat.get(i) + " ");
-//					System.out.print(EmotionDat.get(j) + " __");
-//					System.out.print(isLatter(EmotionDat.get(i), EmotionDat.get(j)) + "__ ");
 					if (isLatter(EmotionDat.get(i), EmotionDat.get(j))){
 						String Datetmp = EmotionDat.get(i);
 						EmotionDat.set(i, EmotionDat.get(j));
@@ -142,23 +149,51 @@ public class getUserEmotionAction  extends ActionSupport {
 						EmotionVal.set(i, EmotionVal.get(j));
 						EmotionVal.set(j, Valtmp);
 					}
-//					System.out.print("     " + EmotionDat.get(i) + " ");
-//					System.out.print(EmotionDat.get(j) + " ");
-//					System.out.println();
 				}
+			}*/
+			
+			InitClassify();
+			//System.out.println(len);
+			
+			for (int i = 0; i < len; ++i){
+				double val = EmotionVal.get(i);
+				//System.out.println(val);
+				if (((-1.0) <= val) && (val < (-0.8))){
+					EmotionAmo.set(0, EmotionAmo.get(0) + 1);
+				}
+				else if (((-0.8) <= val) && (val < (-0.6))){
+					EmotionAmo.set(1, EmotionAmo.get(1) + 1);
+				}
+				else if (((-0.6) <= val) && (val < (-0.2))){
+					EmotionAmo.set(2, EmotionAmo.get(2) + 1);
+				}
+				else if (((-0.2) <= val) && (val < 0.0)){
+					EmotionAmo.set(3, EmotionAmo.get(3) + 1);
+				}
+				else if ((0.0 <= val) && (val < 0.2)){
+					EmotionAmo.set(4, EmotionAmo.get(4) + 1);
+				} 
+				else if ((0.2 <= val) && (val < 0.6)){
+					EmotionAmo.set(5, EmotionAmo.get(5) + 1);
+				} 
+				else if ((0.6 <= val) && (val < 0.8)){
+					EmotionAmo.set(6, EmotionAmo.get(6) + 1);
+				} 
+				else if ((0.8 <= val) && (val <= 1.0)){
+					EmotionAmo.set(7, EmotionAmo.get(7) + 1);
+				} 
+				
 			}
 			
-//			for (int i = 0; i < len - 1; ++i){
-//				System.out.println(EmotionDat.get(i));
-//			}
+//			System.out.println(EmotionVal);
+//			System.out.println(EmotionDat);
+//			System.out.println(EmotionCla);
+//			System.out.println(EmotionAmo);
 			
 			JSONObject json = new JSONObject();
-			json.put("Dat", EmotionDat);
-			json.put("Val", EmotionVal);
+			json.put("Amo", EmotionAmo);
+			json.put("Cla", EmotionCla);
 			
-			//System.out.println(json.get("1"));		
-		//	JSONArray jsonArray = JSONArray.fromObject(EmotionVal);
-		//	System.out.println(jsonArray.toString());
 			result = json.toString();
 			return SUCCESS; 	     
 		} catch (Exception e) {

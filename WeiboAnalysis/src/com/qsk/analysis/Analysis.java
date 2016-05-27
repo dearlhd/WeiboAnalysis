@@ -1,4 +1,5 @@
-package com.qsk.test;
+package com.qsk.analysis;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +30,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.sequences.DocumentReaderAndWriter;
 
 
-public class stanford {
+public class Analysis{
 	
 	  private static final String basedir = System.getProperty("SegDemo", "WebContent/dict");
 	  
@@ -176,7 +177,7 @@ public class stanford {
 		  
 		  //System.out.println(segmented);
 		  
-	      stanford stan = new stanford();
+		  Analysis stan = new Analysis();
 	      int lastPW = 0;
 	      int len = segmented.size();
 	      int i = 0;
@@ -238,7 +239,7 @@ public class stanford {
 	  public static void main(String[] args) throws Exception {
 
 		  loadSegmenter(args);
-		  stanford stan = new stanford();
+		  Analysis stan = new Analysis();
 	    
 		  String path = "data/resources/data_processed.csv";
 		  CSVUtils CSV = new CSVUtils();

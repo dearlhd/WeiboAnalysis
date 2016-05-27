@@ -1,5 +1,6 @@
 package com.weibo.utils.csvUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -31,6 +32,13 @@ public class CSVUtils {
 	}
 
 	public List<Weibo> readCSV(String path) {
+		/*File f = new File (path);
+		String[] ss = f.list();
+		System.out.println("Reading...");
+		for (int i = 0; i <ss.length; i++) {
+			System.out.println(ss[i]);
+		}*/
+		
 		List<Weibo> wbs = new ArrayList<Weibo>();
 		try {
 			List<String[]> dataList = new ArrayList<String[]>(); // 用来保存数据
