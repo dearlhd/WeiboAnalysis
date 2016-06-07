@@ -159,10 +159,12 @@
  					var obj = eval("(" + msg + ")");
  					//console.log(msg);
  					//console.log(obj);
- 					//for (i in obj)
- 					//	console.log(obj[i]);
- 					console.log(obj.Dat);
- 					console.log(obj.Val);
+ 					//console.log(obj.Dat);
+ 					//console.log(obj.Val);
+ 					for (var i = 0; i < obj.Val; ++i){
+ 						obj.Val[i] = obj.Val[i].toFixed(2);
+ 					}
+ 					//console.log(obj.Val);
  					myChart_users = echarts.init(document.getElementById('users'), "macarons"); 
  					option = {
  				 		    title : {
