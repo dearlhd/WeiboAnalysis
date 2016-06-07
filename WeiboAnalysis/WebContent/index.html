@@ -85,7 +85,7 @@
  					obj = eval("(" + msg + ")");
  					//console.log(obj.Amo);
  					//console.log(obj.Cla);
- 				 		
+ 				 	myChart_event = echarts.init(document.getElementById('event'), "macarons");
 					option = {
  				 	    title : {
  				 	        text: '事件舆论情感动向',
@@ -161,7 +161,9 @@
  					//console.log(obj);
  					//for (i in obj)
  					//	console.log(obj[i]);
- 					//console.log(obj.Val);
+ 					console.log(obj.Dat);
+ 					console.log(obj.Val);
+ 					myChart_users = echarts.init(document.getElementById('users'), "macarons"); 
  					option = {
  				 		    title : {
  				 		        text: '人物情感动向',
