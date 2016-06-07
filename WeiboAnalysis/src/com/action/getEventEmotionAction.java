@@ -103,10 +103,10 @@ public class getEventEmotionAction  extends ActionSupport {
 			CSVUtils CSV = new CSVUtils();		
 			List<Weibo> wb = null;
 			if (disType.equals("Stanford")){
-				wb = CSV.readCSV("D:/program/git/Git_Push/WeiboAnalysis/WeiboAnalysis/data/results/result_qsk.csv");
+				wb = CSV.readCSV("G:/work/Java/WeiboAnalysis/WeiboAnalysis/data/results/result_qsk.csv");
 			}
 			else if (disType.equals("JieBa")){
-				wb = CSV.readCSV("D:/program/git/Git_Push/WeiboAnalysis/WeiboAnalysis/data/results/result_lhd.csv");
+				wb = CSV.readCSV("G:/work/Java/WeiboAnalysis/WeiboAnalysis/data/results/result_lhd.csv");
 			}
 			
 			//System.out.println("fuck in");

@@ -161,8 +161,8 @@
  					//console.log(obj);
  					//console.log(obj.Dat);
  					//console.log(obj.Val);
- 					for (var i = 0; i < obj.Val; ++i){
- 						obj.Val[i] = obj.Val[i].toFixed(2);
+ 					for (var i = 0; i < obj.Val.length; ++i){
+ 						obj.Val[i] = obj.Val[i].toFixed(3);
  					}
  					//console.log(obj.Val);
  					myChart_users = echarts.init(document.getElementById('users'), "macarons"); 

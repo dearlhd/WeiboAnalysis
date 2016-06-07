@@ -51,7 +51,10 @@ public class ComputeCredit {
 		for (int i = 0; i < credit.size(); i++) {
 			sum += credit.get(i);
 		}
-		sum = sum/credit.size() *(1.0+ 0.1*credit.size());
+		
+		System.out.println("credit.size: "+credit.size());
+		
+		sum = sum/credit.size() *(1.0+ 0.1*(credit.size()-1));
 		return sum;
 	}
 	
@@ -213,7 +216,7 @@ public class ComputeCredit {
 					}
 				}
 			}
-			if (base > 0) {
+			if (base >= 0) {
 				credit = base;
 				double left = 1-base;
 				for (int i = 0; i < nas.size(); i++) {
